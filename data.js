@@ -21,7 +21,7 @@ const LINKS = {
   dayi:     { text: '答疑 SOP',        url: 'https://n6fo0mbcz6.feishu.cn/wiki/PbvawohPWi6XE5k06fecCzTvnfd' },
   jiangshi: { text: '辅助讲师 SOP',    url: 'https://n6fo0mbcz6.feishu.cn/wiki/FI2qwF0fbiEasckCGTdcdUPXndd' },
   pyq:      { text: '朋友圈公式',      url: 'https://n6fo0mbcz6.feishu.cn/wiki/WzSuwr9uxi6BpMkZBeGcdO7JnZc' },
-  pigai:    { text: '批改文档模板',    url: 'https://n6fo0mbcz6.feishu.cn/wiki/DpoQwGGIAiHpnfkd4BUcAUOlnpe' },
+  pigai:    { text: '批改文档模板',    url: 'https://n6fo0mbcz6.feishu.cn/wiki/Rw60wziDIiXSbRk0B49cmkh1nyd?fromScene=spaceOverview&create_from=create_doc_to_wiki' },
   anli:     { text: '好评案例收集',    url: 'https://n6fo0mbcz6.feishu.cn/docx/ORt5dOYn8oKqEKx5q4icZeHVnof' },
   zhibo:    { text: '直播重建说明',    url: 'https://n6fo0mbcz6.feishu.cn/minutes/obcnloc6sc5xg9789t77331u' },
   yunpan:   { text: '云空间案例',      url: 'https://n6fo0mbcz6.feishu.cn/drive/folder/Inb5fsXzrlNZqjdN7gTcPKedn1g' },
