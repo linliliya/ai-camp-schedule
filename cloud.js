@@ -14,7 +14,10 @@
     if (!value || !Number.isInteger(value.term) || value.term < 1 || value.term > 10000 || !validDate(value.openDate)) throw new Error('营期格式不正确');
     const skips = value.skips || [];
     if (!Array.isArray(skips) || skips.some(n => !Number.isInteger(n) || n < 1 || n > 12)) throw new Error('休息周格式不正确');
-    return { term: value.term, openDate: value.openDate, skips: [...new Set(skips)].sort((a, b) => a - b) };
+    const examWeek = value.examWeek ?? value.exam_week;
+    if (examWeek !== undefined && (!Number.isInteger(examWeek) || examWeek < 1 || examWeek > 12)) throw new Error('考试周请选择第 1～12 周。');
+    return { term: value.term, openDate: value.openDate, skips: [...new Set(skips)].sort((a, b) => a - b),
+      ...(examWeek !== undefined ? {examWeek} : {}) };
   }
   function normalizeList(values) {
     if (!Array.isArray(values) || values.length > 200) throw new Error('营期格式不正确');
@@ -162,7 +165,10 @@
     }
     save(camp, original) {
       const value = normalizeCamp(camp);
+      const examWeek = value.examWeek ?? original?.examWeek ?? 7;
+      const exam = examWeek !== 7 || (original?.examWeek ?? 7) !== 7 ? {p_exam_week: examWeek} : {};
       return this.mutate('save_schedule_camp', {
+        ...exam,
         p_id: original ? original.id : null, p_version: original ? original.version : null,
         p_term: value.term, p_open_date: value.openDate, p_skips: value.skips,
       });

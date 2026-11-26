@@ -14,6 +14,9 @@ create table if not exists public.schedule_camps (
   deleted_at timestamptz,
   unique (id, program)
 );
+alter table public.schedule_camps
+  add column if not exists exam_week integer not null default 7 check (exam_week between 1 and 12);
+
 create unique index if not exists schedule_camps_active_term
   on public.schedule_camps(program, term) where deleted_at is null;
 
@@ -74,7 +77,7 @@ end;
 $$;
 
 create or replace function public.save_schedule_camp(
-  p_program text, p_id uuid, p_version integer, p_term integer, p_open_date date, p_skips integer[])
+  p_program text, p_id uuid, p_version integer, p_term integer, p_open_date date, p_skips integer[], p_exam_week integer)
 returns jsonb language plpgsql security definer set search_path = '' as $$
 declare result public.schedule_camps; normalized integer[];
 begin
@@ -84,17 +87,24 @@ begin
   end if;
   select coalesce(array_agg(distinct n order by n), '{}'::integer[]) into normalized from unnest(p_skips) n;
   if p_id is null then
-    insert into public.schedule_camps(program, term, open_date, skips, updated_by)
-      values(p_program, p_term, p_open_date, normalized, auth.uid()) returning * into result;
+    insert into public.schedule_camps(program, term, open_date, skips, exam_week, updated_by)
+      values(p_program, p_term, p_open_date, normalized, coalesce(p_exam_week, 7), auth.uid()) returning * into result;
   else
     update public.schedule_camps set term = p_term, open_date = p_open_date, skips = normalized,
-      version = version + 1, updated_by = auth.uid(), updated_at = clock_timestamp()
+      exam_week = coalesce(p_exam_week, exam_week), version = version + 1, updated_by = auth.uid(), updated_at = clock_timestamp()
       where id = p_id and program = p_program and version = p_version and deleted_at is null
       returning * into result;
     if not found then raise exception 'schedule_conflict' using errcode = 'P0001'; end if;
   end if;
   return to_jsonb(result);
 end;
+$$;
+
+-- Older clients do not send an exam week. Their edits preserve the stored selection.
+create or replace function public.save_schedule_camp(
+  p_program text, p_id uuid, p_version integer, p_term integer, p_open_date date, p_skips integer[])
+returns jsonb language sql security invoker set search_path = '' as $$
+  select public.save_schedule_camp(p_program, p_id, p_version, p_term, p_open_date, p_skips, null::integer);
 $$;
 
 create or replace function public.delete_schedule_camp(p_program text, p_id uuid, p_version integer)
@@ -156,7 +166,7 @@ begin
       from jsonb_array_elements_text(entry->'skips');
     begin
       saved := public.save_schedule_camp(p_program, null, null, (entry->>'term')::integer,
-        (entry->>'open_date')::date, normalized);
+        (entry->>'open_date')::date, normalized, (entry->>'exam_week')::integer);
     exception when unique_violation then
       skipped_terms := array_append(skipped_terms, (entry->>'term')::integer);
       continue;
@@ -172,11 +182,13 @@ $$;
 
 revoke all on function public.schedule_require_member(text), public.schedule_snapshot(text),
   public.save_schedule_camp(text,uuid,integer,integer,date,integer[]),
+  public.save_schedule_camp(text,uuid,integer,integer,date,integer[],integer),
   public.delete_schedule_camp(text,uuid,integer),
   public.set_schedule_task(text,uuid,text,integer,boolean),
   public.import_schedule_camps(text,jsonb) from public, anon, authenticated;
 grant execute on function public.schedule_snapshot(text),
   public.save_schedule_camp(text,uuid,integer,integer,date,integer[]),
+  public.save_schedule_camp(text,uuid,integer,integer,date,integer[],integer),
   public.delete_schedule_camp(text,uuid,integer),
   public.set_schedule_task(text,uuid,text,integer,boolean),
   public.import_schedule_camps(text,jsonb) to authenticated;

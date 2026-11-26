@@ -1,0 +1,11 @@
+# Android Morandi UI and native camp creation
+
+The user authorized a refined native Android UI, real dynamic frosted glass, improved Chinese type, removal of the top-left branding, and the website's add-camp workflow. Keep immediate circular task completion and existing notifications and Feishu links.
+
+Use muted sage, blue gray, warm ivory and taupe. Apply a bundled Chinese sans font consistently, with regular body text and medium/semibold headings, natural Chinese tracking and generous line heights. Remove the app mark/name from the top bar; retain small useful sync/demo controls. Page headings provide hierarchy.
+
+Use Haze 1.1.1, whose Kotlin 2.0.21 and Compose 1.7 baseline matches this project. The screen is one backdrop source, the floating bottom navigation samples it without capturing itself. Content scrolls behind the navigation and receives bottom content padding so the final item remains accessible. A spring-moving selection capsule and restrained rim/highlight provide motion. Android versions where Haze disables blur retain its supported translucent fallback. A small secondary floating sync capsule can share the source. Do not blur task text or add continuous animation loops.
+
+Add a native camp sheet: next term (1..10000), required opening date with year (2000..2100), and optional skipped course weeks 1..12. Sunday is suggested, not required, matching the website. Use existing member-protected save_schedule_camp RPC with p_id=null; cache its confirmed result directly, with later shared changes arriving through normal periodic/manual refresh. No database schema or schedule formulas change. New camp selection opens its relevant phase and the shared engine supplies Today tasks and reminders. Demo remains read-only. Preserve entered form values on failure and surface duplicate-term/access/network errors. Disable duplicate submission. Do not create production camp fixtures.
+
+Verify cloud payload/access/failure and cache behavior, generated schedule/reminder parity, native form interaction, fonts and actual backdrop changes in the dedicated emulator, existing completion tests, full UI/background checks, signed APK and upgrade persistence. No claim of Xiaomi hardware validation without a connected phone.

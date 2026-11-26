@@ -1,0 +1,11 @@
+<!-- Original schedule-card mark. Central artwork stays inside the adaptive icon safe zone. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
+    <group android:rotation="9" android:pivotX="55" android:pivotY="55">
+        <path android:fillColor="#93AB9A" android:pathData="M41,32h28q7,0 7,7v34q0,7 -7,7H41q-7,0 -7,-7V39q0,-7 7,-7z" />
+    </group>
+    <path android:fillColor="#243C5C" android:fillAlpha="0.2" android:pathData="M38,31h24l15,15v29q0,7 -7,7H38q-7,0 -7,-7V38q0,-7 7,-7z" />
+    <path android:fillColor="#FAF7EF" android:pathData="M36,27h24l15,15v30q0,7 -7,7H36q-7,0 -7,-7V34q0,-7 7,-7z" />
+    <path android:fillColor="#DCE4DF" android:pathData="M60,27v9q0,6 6,6h9z" />
+    <path android:fillColor="#779882" android:pathData="M39,27h8v15l-4,-3 -4,3z" />
+    <path android:fillColor="@android:color/transparent" android:strokeColor="#435B85" android:strokeWidth="3.8" android:strokeLineCap="round" android:pathData="M40,53h23M40,63h15" />
+</vector>

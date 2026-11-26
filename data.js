@@ -6,30 +6,38 @@
 //   - 分享固定网址即可查看最新排期，旧浏览器数据可在页面中手动导入
 //
 // 页面根据开营日期自动推算：
+//   开营筹备 = 开营日期前一个自然月开始，至开营周前一天
 //   开营周   = 开营直播当周（月底/下月初开营，周一 ~ 周日开营直播）
 //   第1~12周 = 开营后的12个自然周（周一起算）
-//   第12周   = 结营周（周日结营直播）
+//   第12周   = 毕业作品收集与结营筹备
+//   第13周   = 结营周（周日典礼，具体时刻按本期通知）
 //   休息周   = 添加营期时勾选的长假周，课程整体顺延一周
-//   ⚠ 考试周暂未确定，考试相关任务暂不排入；确定后在此文件补充
+//   第1周课程提前开放。考试前按下一周课程提醒，考试周备考，考试后按同周课程提醒。
+//   入学档案每期新建，本期各渠道使用本期入口，不固定跨期填写链接
 // ═══════════════════════════════════════════════════════════════════
 
 // ═══════════════════════════════════════════════════════════════════
 // ① 常用链接
 // ═══════════════════════════════════════════════════════════════════
 const LINKS = {
-  duxue:    { text: '督学 SOP',        url: 'https://n6fo0mbcz6.feishu.cn/wiki/ZoqkwjnbEiUX1xkYIYYcrddRnUh' },
-  dayi:     { text: '答疑 SOP',        url: 'https://n6fo0mbcz6.feishu.cn/wiki/PbvawohPWi6XE5k06fecCzTvnfd' },
-  jiangshi: { text: '辅助讲师 SOP',    url: 'https://n6fo0mbcz6.feishu.cn/wiki/FI2qwF0fbiEasckCGTdcdUPXndd' },
+  chengguo: { text: '学习成果调研问卷', url: 'https://n6fo0mbcz6.feishu.cn/share/base/form/shrcnhnPCnecliH1Qaj7XixIP4f' },
+  chengguoguanli: { text: '学习成果调研管理', url: 'https://n6fo0mbcz6.feishu.cn/base/Q1B0bMjyWaOIMKsw4HQcnEoFnpg?from=from_copylink' },
+  duxue:    { text: '督学 SOP',        url: 'https://n6fo0mbcz6.feishu.cn/wiki/OL6zw9FhsiUO56kVQtfcUfIfnjh' },
+  dayi:     { text: '答疑 SOP',        url: 'https://n6fo0mbcz6.feishu.cn/wiki/WgnMwexTQiomETkx3z2cnNJ8nac' },
+  jiangshi: { text: '辅助讲师 SOP',    url: 'https://n6fo0mbcz6.feishu.cn/wiki/ZlUnwQYtXiaxrPknpjCc4qZCntb' },
   pyq:      { text: '朋友圈公式',      url: 'https://n6fo0mbcz6.feishu.cn/wiki/WzSuwr9uxi6BpMkZBeGcdO7JnZc' },
-  pigai:    { text: '批改文档模板',    url: 'https://n6fo0mbcz6.feishu.cn/wiki/DpoQwGGIAiHpnfkd4BUcAUOlnpe' },
-  anli:     { text: '好评案例收集',    url: 'https://n6fo0mbcz6.feishu.cn/docx/ORt5dOYn8oKqEKx5q4icZeHVnof' },
+  pigai:    { text: '批改文档模板',    url: 'https://n6fo0mbcz6.feishu.cn/wiki/Rw60wziDIiXSbRk0B49cmkh1nyd?fromScene=spaceOverview&create_from=create_doc_to_wiki' },
+  anli:     { text: '好评案例收集',    url: 'https://n6fo0mbcz6.feishu.cn/docx/KizCdjpy0oiMSoxZALCcGvCUnVX' },
   zhibo:    { text: '直播重建说明',    url: 'https://n6fo0mbcz6.feishu.cn/minutes/obcnloc6sc5xg9789t77331u' },
   yunpan:   { text: '云空间案例',      url: 'https://n6fo0mbcz6.feishu.cn/drive/folder/Inb5fsXzrlNZqjdN7gTcPKedn1g' },
-  wenjuan:  { text: '入学档案问卷',    url: 'https://n6fo0mbcz6.feishu.cn/share/base/form/shrcnISwi4LEd5CrlnFrOs2gCgd' },
-  tijiao:   { text: '作业提交指南',    url: 'https://n6fo0mbcz6.feishu.cn/docx/O02LdlCDHorC5ExnjBgc39Nynug' },
+  tijiao:   { text: '作业提交指南示例', url: 'https://n6fo0mbcz6.feishu.cn/docx/O02LdlCDHorC5ExnjBgc39Nynug' },
   fenxiang: { text: '分享稿案例',      url: 'https://n6fo0mbcz6.feishu.cn/wiki/JMF5wm7s3ixxAukpCNgcjqJanrg' },
   top5:     { text: '名单表格示例',    url: 'https://n6fo0mbcz6.feishu.cn/wiki/Wj1fwyPjBiywgLkwalYc0iqtnMc' },
   jiangpin: { text: '奖品信息问卷',    url: 'https://n6fo0mbcz6.feishu.cn/wiki/CRPmwNtQti382gkKIhLcDRi7njd' },
+  biye:     { text: '毕业作品问卷示例', url: 'https://n6fo0mbcz6.feishu.cn/base/OixKbFK55aKFx8sZIO3c9mzVnOc' },
+  kaoshi:   { text: '考试常见问题',    url: 'https://n6fo0mbcz6.feishu.cn/docx/E8Uzdz1OWoq9pex0lnmcsSfPnHb' },
+  shiming:  { text: '实名认证操作流程', url: 'https://docs.qq.com/aio/DVnRHWVpUdWNGcE5v' },
+  kaoshiliucheng: { text: '考试操作流程', url: 'https://docs.qq.com/aio/DVkJWSUJJdGNuaVNT' },
 };
 
 // ═══════════════════════════════════════════════════════════════════
@@ -37,6 +45,10 @@ const LINKS = {
 //    day:    1~6 = 周一~周六，0 = 周日，'all' = 全周/日常
 //    time:   有硬时间点的任务填这里（如 '15:00前'、'直播前'），页面会标红并按时间排序
 //    follow: true = 跨周跟进项（如寄奖品），完成勾掉前会一直出现在今日待办
+//    id:     改名时填写原标题，保持云端勾选和旧浏览器导入的标识不变
+//    idDay:  调整星期时填写原 day，与 id 一样保留原有完成记录
+//    idWeek: 调整阶段时填写原阶段 key，保留云端与旧浏览器完成记录
+//    links:  多个文档入口，单个入口仍可使用 link
 // ═══════════════════════════════════════════════════════════════════
 
 // ── 休息周（长假顺延，添加营期时勾选）──
@@ -46,23 +58,29 @@ const SOP_REST = [
   { day: 'all', t: '假期期间关注群消息，答疑可降低频率' },
 ];
 
-// ── 开营周（月底准备，周日开营直播）──
+// ── 开营筹备（开营前约一个月开始，未完成则持续跟进）──
+const SOP_PREP = [
+  { day: 'all', follow: true, idWeek: 'open', t: '新建本期入学档案问卷', d: '开营前约一个月新建并发布本期档案问卷，按期数命名、核对字段及填写权限；本期所有购买渠道使用本期入口，记录供接待时发送，勿复用其他期的填写链接' },
+  { day: 'all', follow: true, idWeek: 'open', id: '创建本期课程', t: '建立本期小鹅通圈子与课程', d: '开营前约一个月复制或建立本期圈子，修改名称及课程、作业解锁时间；开营/结营直播新建，答疑直播按日期关联已有直播，无对应日期再新建；整理B站课程视频', link: 'zhibo' },
+  { day: 'all', follow: true, idWeek: 'open', id: '更新本期云空间配套资料', t: '建立本期群资料与云空间', d: '开营前约一个月新建本期配套资料文件夹，准备群公告、上课链接、直播答疑文档、代码、讲义及作业提交指南；逐项替换本期链接并核对权限，供后续建群发布', links: ['yunpan', 'tijiao'] },
+];
+
+// ── 开营周（周日开营直播，资料及圈子已在筹备阶段建立）──
 const SOP_OPEN = [
+  { day: 'all', t: '向已购学员发送开营安排与预习资料', d: '开营前群发私聊已购学员，同步本期开营与建群安排、课程资料和观看指引，提醒填写本期学员调查问卷；具体日期、时刻与入口按本期安排填写' },
   { day: 'all', t: '接待已购学员（开营前持续进行）',
-    d: '核对订单后，给学员发入学档案问卷；B站学员需额外打标签，并发送鹅圈子兑换码', link: 'wenjuan' },
-  { day: 'all', t: '创建本期课程',
-    d: '鹅圈子复制并改每周解锁时间；答疑直播全部删除重建（批量创建-视频直播-传统直播间）；B站课程视频复制整理', link: 'zhibo' },
-  { day: 'all', t: '更新本期云空间配套资料',
-    d: '新建「【AI编程训练营】第x期 配套资料」共享文件夹：上课链接文档、直播答疑文档文件夹、配套代码链接文档、讲义/常见问题/赠品快捷方式', link: 'yunpan' },
+    d: '核对订单后发送本期新建的入学档案问卷，核对期数与填写入口；B站学员需额外打标签，并发送鹅圈子兑换码' },
   { day: 'all', t: '建立学员小队群',
-    d: '按群模板建群 → 改群名「xx队 AI编程训练营x期交流群」→ 发布群公告（资料云空间、提交作业方式、答疑时间）', link: 'tijiao' },
+    d: '按群模板建群 → 改群名「xx队 AI编程训练营x期交流群」→ 发布筹备阶段整理的本期群公告（资料云空间、提交作业方式、答疑时间），使用本期资料入口', link: 'tijiao' },
   { day: 'all', t: '更新开营直播 keynote 与逐字稿', d: '更新小队分组、上课链接与小程序码、新的成功案例' },
+  { day: 'all', t: '发起学员自我介绍接龙', d: '开营前或开营第一天发群，引导学员交流昵称、行业背景、学习动机和想做的项目，不强制填写格式' },
   { day: 5, t: '新建本期鹅圈子兑换码，发给 B 站渠道学员', d: 'B站学员需通过兑换码进入学员专属圈子' },
-  { day: 6, t: '学员随机分组，开营前拉进对应小队群', d: '未分队学员来问时：告知分队并拉群' },
-  { day: 6, t: '鹅圈子新建小队并把成员移入对应小队' },
-  { day: 0, time: '直播前', t: '把学员拉进小队群 + 发送开营直播提醒', d: '1v1 私聊全员 + 小队群 @所有人' },
+  { day: 6, t: '学员随机分组，开营前拉进对应小队群', d: '以企微成员截图核对完整名单，入学档案用于筛选队长；队长计入人数，各队人数差不超过1人，统一用微信昵称且不重不漏。未分队学员来问时告知分队并拉群' },
+  { day: 0, time: '上午', t: '私聊全员发送开营直播提醒', d: '开营当天上午1v1发送，使用本期开营直播链接' },
+  { day: 0, time: '直播前', t: '把学员拉进小队群 + 发送开营直播提醒', d: '周日开营前完成拉群，约19:00在小队群 @所有人发送直播提醒' },
   { day: 0, time: '晚上', t: '开营典礼直播', d: '直播中维护讨论区秩序' },
   { day: 0, t: '开营直播后收尾', d: '群发回看提醒' },
+  { day: 0, idDay: 6, time: '直播后', t: '鹅圈子新建小队并把成员移入对应小队', d: '开营直播后按已确认分组建立小队、移入成员，并核对企微群与圈子分队是否一致' },
 ];
 
 // ── 常规周（第1~12周每周固定动作）──
@@ -78,35 +96,82 @@ const SOP_REGULAR = [
   { day: 3, t: '发布朋友圈 ②', link: 'pyq' },
   { day: 4, t: '督促前两周未完成作业/随堂练习的同学，询问有无困难', link: 'duxue', notW1: true },
   { day: 4, t: '选出优秀分享给出精选/点赞', d: '部分可留作朋友圈素材' },
-  { day: 5, t: '提醒本周作业截止时间', link: 'duxue' },
-  { day: 5, t: '开启本周答疑问卷收集', d: '问卷设置截止时间：本周六 14:00（老师直播在周六）' },
+  { day: 5, t: '提醒本周作业截止时间', d: '本周日24:00截止，即下周一00:00；提醒学员提前安排提交', link: 'duxue' },
+  { day: 5, t: '开启本周答疑问卷收集', d: '各期分别创建并发布问卷，设置周六14:00截止；问卷创建后立即把入口和查看方式交给对应答疑老师，不等截止后才交接' },
+  { day: 5, time: '创建后立即', t: '问卷创建后立即把入口发给答疑老师', d: '各期分别交接，确认老师能查看后续新增问题；如提前创建，则在实际创建当天发送，不等周五或周六截止' },
   { day: 5, t: '发布朋友圈 ③', d: '每周3条一般在周五前发完', link: 'pyq' },
-  { day: 5, t: '收集好评/成果案例 3 条至案例文档', link: 'anli' },
-  { day: 6, time: '14:00前', t: '结束答疑问卷收集，整理后发给答疑老师' },
-  { day: 0, t: '提醒本周作业提交截止' },
-  { day: 'all', t: '日常：新购付费学员接待入群', d: '订单核验 → 发入学档案问卷（B站学员另发圈子兑换码）→ 填完按小队人数均衡分队 → 拉小队群 + 鹅圈子分队', link: 'wenjuan' },
-  { day: 'all', t: '日常：督学 / 答疑 / 辅助讲师直播答疑', d: '班主任答疑：工作日 10:00–20:00；VIP讲师答疑：24小时内', link: 'duxue' },
+  { day: 5, id: '收集好评/成果案例 3 条至案例文档', t: '收集好评/成果案例 5 条至案例文档', d: '每周5条 / 每月20条，选择部分作为朋友圈素材', link: 'anli' },
+  { day: 6, time: '14:00前', t: '提醒答疑问卷即将截止', d: '在周六14:00截止前提醒学员填写，并提醒今晚20:00参加直播答疑' },
+  { day: 6, time: '14:00', id: '结束答疑问卷收集，整理后发给答疑老师', t: '截止答疑问卷收集，整理新增问题并同步老师', d: '问卷入口在创建后已交给老师；此时核对截止前新增的问题并补充整理，同步给对应营期的答疑老师' },
+  { day: 6, time: '20:00', t: '本周讲师直播答疑', d: '按营期分别准备问题与资料，提醒学员参加每周六20:00的直播', links: ['dayi', 'jiangshi'] },
+  { day: 0, time: '24:00', t: '提醒本周作业提交截止', d: '本周日24:00，即下周一00:00截止；提醒学员在截止前完成提交', link: 'duxue' },
+  { day: 'all', t: '日常：新购付费学员接待入群', d: '订单核验 → 发本期新建的入学档案问卷并核对期数（B站学员另发圈子兑换码）→ 填完按小队人数均衡分队 → 拉小队群 + 鹅圈子分队' },
+  { day: 'all', t: '日常：督学 / 答疑 / 辅助讲师直播答疑', d: '班主任答疑：工作日 10:00–20:00；VIP讲师答疑：24小时内', links: ['duxue', 'dayi', 'jiangshi'] },
 ];
 
-// ── 特殊周叠加任务（考试周未定，暂无考试相关任务）──
+// ── 特殊周叠加任务 ──
 const SOP_EXTRAS = {
   1: [
     { day: 'all', t: '邀请答疑讲师进新小队群并作介绍', d: '先私聊讲师确认，入群后按话术模板介绍', tag: 'open' },
+    { day: 'all', t: '核对本期成长值设置', d: '课程视频和直播不设成长值；随堂练习、作业、分享、精选等按 SOP 和本期课程配置核对', link: 'duxue' },
+  ],
+  3: [
+    { day: 3, t: '发布老带新话术', d: '第3周周三在本期学员群发布老带新话术，发送前核对本期推荐链接和已确认的活动规则。' },
+  ],
+  11: [
+    { day: 1, t: '提醒学员启动毕业设计', d: '发布课程提醒时同步毕业设计事项，无论学到哪里都需准备毕业项目，可选 App 或网站；查看第11周讲义要求，截止为第13周周三23:59', tag: 'close' },
+    { day: 3, t: '发布老带新话术', d: '第11周周三在本期学员群发布老带新话术，发送前核对本期推荐链接和已确认的活动规则。' },
+  ],
+  12: [
+    { day: 1, t: '发送毕业作品提交与展示意愿问卷', d: '周一按本期、本小队分别发毕业作品问卷，询问作品收集进度；第13周周三23:59截止，每位学员均需提交，暂不展示也要填写。核对本期本队入口', link: 'biye', tag: 'close' },
+    { day: 3, t: '鹅圈子添加结营证书', d: '复制往期证书，选择对应期数的随堂练习/作业/打卡', tag: 'close' },
+    { day: 3, t: '统计冠军队伍和 Top 5 成员名单', d: '冠军队伍 = Top 1 次数最多小队；Top 5 = 总成长值最高的五位学员', link: 'top5', tag: 'close' },
+    { day: 3, t: '更新结营直播 keynote 与逐字稿', d: '获奖小队/学员头像/奖品图/小队名单；更新本期优惠券和推荐链接，直播时刻按老师可用时间确认', tag: 'close' },
   ],
 };
 
-// ── 结营周（第12周，替代大部分常规动作）──
+// 以本期考试周为基准，预约和报名分别提前两周和一周。
+const SOP_EXAM = {
+  [-2]: [
+    { idWeek: 'week-5', day: 'all', t: '联系考试老师预约本期考试', d: '考试周前两周联系考试负责老师，确认本期实际考试日期、场次和报名要求；后续通知均使用本期预约结果', link: 'kaoshi', tag: 'exam' },
+  ],
+  [-1]: [
+    { idWeek: 'week-6', day: 5, t: '发布本期工信部证书报考信息收集问卷', d: '按本期单独创建报名表，注明考试周周一12:00截止；当前期群@所有人，上一期群发普通消息提醒补报，仅覆盖这两期；姓名、手机号、邮箱须真实有效，使用本期表单', link: 'kaoshi', tag: 'exam' },
+    { idWeek: 'week-6', day: 'all', t: '核对考试意向并标记延期学员', d: '有时间参加者填写本期报名问卷；本期无法参加者告知可参加下个月考试，并打“等待下一期考试”等标签，方便下次群发筛选。请其留意群内报名通知，避免承诺逐一私信提醒', tag: 'exam' },
+  ],
+  [0]: [
+    { idWeek: 'week-7', day: 1, time: '12:00', t: '提醒报考信息填写截止', d: '截止前再次提醒尚未填写的学员，周一12:00关闭本期信息收集并核对报名资料', link: 'kaoshi', tag: 'exam' },
+    { idWeek: 'week-7', day: 2, time: '12:00前', t: '向考试工作人员移交本期报名信息', d: '按工作人员要求提供本期报名信息，并通知学员查看实名认证短信或邮件；已完成过实名认证的学员按平台要求处理', tag: 'exam' },
+    { idWeek: 'week-7', day: 4, t: '提醒报考学员完成实名认证', d: '提交认证后将审核页面滑到顶部，确认出现“审核中”，核对提交状态；认证截止以本期考试通知为准', link: 'shiming', tag: 'exam' },
+    { idWeek: 'week-7', day: 5, time: '考前', t: '核对本期考试日期与场次，发送考前提醒', d: '周五至周日按本期预约组织考试，逐场使用实际日期和时间；提醒核对考生编号、证件、电脑、网络和摄像头，岗位按本期要求选择，不套用示例图片', link: 'kaoshiliucheng', tag: 'exam' },
+    { idWeek: 'week-7', day: 0, t: '提醒尚未参加本期考试的学员', d: '核对本期预约与完成情况，仅向当日仍有考试安排且尚未参加的学员发送提醒，已完成考试的学员无需重复提醒', link: 'kaoshiliucheng', tag: 'exam' },
+    { idWeek: 'week-7', day: 0, follow: true, t: '跟进考试证书，收到后核对并寄送', d: '考试结束后持续跟进证书进度；收到证书后按姓名核对并寄送，通知学员查收。未收到时继续跟进，不提前标记已寄送', tag: 'exam' },
+  ],
+};
+
+// 第13周为专门的结营周。沿用 week-12 任务标识空间，兼容现有云端约束和历史勾选记录。
 const SOP_CLOSING = [
-  { day: 1, t: '群发私聊学员成果调研问卷，收集成果与反馈', d: '被选中作分享案例的有惊喜奖励', tag: 'close' },
-  { day: 3, t: '选出两名优秀学员，邀请做结营文字分享', tag: 'close' },
-  { day: 3, t: '整理学员对话版分享逐字稿，请学员确认修改', link: 'fenxiang', tag: 'close' },
-  { day: 3, t: '鹅圈子添加结营证书', d: '复制往期证书，选择对应期数的随堂练习/作业/打卡', tag: 'close' },
-  { day: 3, t: '统计冠军队伍和 Top 5 成员名单', d: '冠军队伍 = Top 1 次数最多小队；Top 5 = 总成长值最高的五位学员', link: 'top5', tag: 'close' },
-  { day: 3, t: '更新结营直播 keynote 与逐字稿', d: '获奖小队/学员头像/奖品图/小队名单；更新优惠券和推荐链接', tag: 'close' },
-  { day: 0, time: '上午', t: '发送结营直播预告 + 文字分享预告', d: '晚 19:30 小鹅通直播；下午 17:00 发优秀学员对话分享', tag: 'close' },
-  { day: 0, time: '17:00', t: '交流群发布优秀学员对话版分享', tag: 'close' },
-  { day: 0, time: '19:30', t: '结营典礼直播', d: '直播中提醒获奖学员找班班填写奖品信息收集问卷', link: 'jiangpin', tag: 'close' },
-  { day: 0, time: '直播后', t: '群发优惠券与推广返现说明', tag: 'close' },
-  { day: 'all', follow: true, t: '邮寄实物奖励及发放虚拟奖励', link: 'jiangpin', tag: 'close' },
-  { day: 'all', t: '常规督学动作照常进行', d: '作业批改、答疑问卷、朋友圈等按每周节奏正常执行' },
+    { day: 1, idWeek: 'week-12', id: '群发私聊学员成果调研问卷，收集成果与反馈', t: '群内发布成果调研问卷，收集成果与反馈', d: '在本期学员群@所有人发布学习成果调研问卷，收集学习情况、项目成果、困难与建议；使用本期问卷，被选中分享案例的奖励按本期安排', links: ['chengguo', 'chengguoguanli'], tag: 'close' },
+
+  { day: 1, idWeek: 'week-12', t: '再次提醒学员提交毕业作品', d: '提醒本周三23:59截止，核对作品收集进度；每位学员均需提交，正在完善的版本也可提交', tag: 'close' },
+  { day: 3, idWeek: 'week-12', time: '下班前', t: '再次提醒学员提交毕业作品', d: '提醒今晚23:59截止，核对尚未提交名单并提醒补交', tag: 'close' },
+  { day: 3, idWeek: 'week-12', time: '23:59前', t: '截止收集毕业作品与展示意愿', d: '第13周周三23:59截止，核对各小队问卷及作品；支持文件、截图、视频或链接', tag: 'close' },
+  { day: 4, idWeek: 'week-12', idDay: 5, id: '每队评选并公布 1–2 位毕业展示代表', t: '整理作品，与队长确定展示成员', d: '将各小队毕业作品交给对应队长，一起确认参加展示的成员、作品与出场安排', tag: 'close' },
+  { day: 5, idWeek: 'week-12', t: '发送嘉宾邀请并确认展示安排', d: '逐一发送本期嘉宾专用链接，明确每人展示5分钟；提前安装鹅直播，用购课微信登录，检查麦克风、屏幕共享及手机App展示方式，链接请勿转发', tag: 'close' },
+  { day: 5, idWeek: 'week-12', time: '周五或周六', t: '测试直播并组织嘉宾彩排', d: '新建测试直播，仅邀请展示嘉宾；与学员约定周五或周六彩排，调试设备、共享屏幕及出场衔接，可在任务详情设置本期提醒', tag: 'close' },
+  { day: 0, idWeek: 'week-12', id: '发送结营直播预告 + 文字分享预告', time: '上午', t: '发送结营典礼预告', d: '群内发布本期典礼安排、嘉宾展示信息和直播入口，时刻根据老师时间确认后填写', tag: 'close' },
+  { day: 0, idWeek: 'week-12', t: '结营典礼直播', d: '第13周周日举行，时刻根据本期老师安排确认，可在任务详情设置本机提醒；直播中提醒获奖学员填写奖品信息收集问卷', link: 'jiangpin', tag: 'close' },
+  { day: 0, idWeek: 'week-12', time: '结营直播中', t: '各小队代表进行毕业作品展示', d: '按已确认的代表名单和出场安排展示，每人5分钟', tag: 'close' },
+  { day: 0, idWeek: 'week-12', time: '直播后', t: '群发优惠券与推广返现说明', d: '第13周老带新由此通知承担。每期单独安排500元优惠券及推荐福利，好友减200、推荐返300为当前参考，发送前核对本期金额、有效期、领取入口与条件；保留退款后返现需退回的说明', tag: 'close' },
+  { day: 0, idWeek: 'week-12', idDay: 'all', id: '邮寄实物奖励及发放虚拟奖励', follow: true, t: '按本期方案发放结营奖励', d: '典礼后按本期已公布的方案、获奖名单及发放方式执行；如包含实物则按方案寄送。考试证书另行跟进', link: 'jiangpin', tag: 'close' },
 ];
+
+// 结营后的独立长期追踪任务，日期以第13周周日为基准。
+const SOP_TRACKING = [
+  { day: 'all', idWeek: 'week-12', follow: true, afterDays: 14, time: '结营后两周', t: '群发结营后学习成果调研问卷', d: '第15周周日，在学员群发布同一份成果调研问卷，了解后续项目与实践情况', links: ['chengguo', 'chengguoguanli'] },
+  { day: 'all', idWeek: 'week-12', follow: true, afterMonths: 2, time: '结营后2个月', t: '初次回访高活跃学员', d: '私聊高活跃学员，了解AI编程使用、新作品和实际问题解决情况' },
+  { day: 'all', idWeek: 'week-12', follow: true, afterMonths: 4, time: '结营后4个月', t: '追踪已回访学员的实践成果', d: '私聊之前回访过的学员，了解项目上线、真实用户、接单和变现等后续进展' },
+];
+
+// ── 资料冲突与待定安排（只展示说明，不生成可勾选任务）──
+const SOP_PENDING = [];

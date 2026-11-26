@@ -1,6 +1,7 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
+const vm=require('node:vm');
 const { PGlite }=require(process.env.PGLITE_MODULE || '@electric-sql/pglite');
 
 test('database permissions, program isolation, stale edits, imports and shared task progress',async()=>{
@@ -17,10 +18,12 @@ test('database permissions, program isolation, stale edits, imports and shared t
   const identity=async(id,role='authenticated')=>{await pg.exec('reset role');await pg.query("select set_config('request.jwt.claim.sub',$1,false)",[id]);await pg.exec('set role '+role);};
   const rpc=async(name,params,casts)=> (await pg.query(`select public.${name}(${params.map((_,i)=>'$'+(i+1)+(casts?.[i]?'::'+casts[i]:'')).join(',')}) as value`,params)).rows[0].value;
   const save=(program,term,id=null,version=null,date='2030-01-06')=>rpc('save_schedule_camp',[program,id,version,term,date,[]],['text','uuid','integer','integer','date','integer[]']);
+  const saveExam=(program,term,id,version,exam)=>rpc('save_schedule_camp',[program,id,version,term,'2030-01-06',[],exam],['text','uuid','integer','integer','date','integer[]','integer']);
   const snapshot=p=>rpc('schedule_snapshot',[p]);
   const setTask=(p,id,key,v,done)=>rpc('set_schedule_task',[p,id,key,v,done],['text','uuid','text','integer','boolean']);
   const importCamps=(p,rows)=>rpc('import_schedule_camps',[p,JSON.stringify(rows)],['text','jsonb']);
   await identity('','anon');await assert.rejects(snapshot('ai'),e=>e.code==='42501');
+  await assert.rejects(saveExam('ai',1,null,null,6),e=>e.code==='42501');
   await identity(other);await assert.rejects(snapshot('ai'),/schedule_members_only/);
   await identity(member);
   const ai=await save('ai',1),crawler=await save('crawler',1);
@@ -34,15 +37,32 @@ test('database permissions, program isolation, stale edits, imports and shared t
   const unchecked=await setTask('ai',ai.id,task.task_key,task.version,false);assert.equal(unchecked.version,2);
   await assert.rejects(setTask('ai',ai.id,task.task_key,task.version,true),/schedule_conflict/);
   assert.equal((await snapshot('ai')).tasks.filter(t=>t.completed).length,1);
-  const renamed=await save('ai',2,ai.id,1);assert.equal(renamed.id,ai.id);
+  assert.equal(ai.exam_week,7);
+  await assert.rejects(saveExam('ai',1,ai.id,1,13),e=>e.code==='23514');
+  const edited=await saveExam('ai',1,ai.id,1,6);assert.equal(edited.exam_week,6);
+  const renamed=await save('ai',2,ai.id,edited.version);assert.equal(renamed.id,ai.id);assert.equal(renamed.exam_week,6);
   await assert.rejects(save('ai',3,ai.id,1),/schedule_conflict/);
   assert.equal((await snapshot('ai')).tasks.length,2);
   const imported=await importCamps('ai',[
    {term:2,open_date:'2040-01-01',skips:[],completed_tasks:['open|all|旧任务']},
-   {term:3,open_date:'2030-02-03',skips:[2],completed_tasks:['rest-2|all|测试导入任务']}
+   {term:3,open_date:'2030-02-03',skips:[2],exam_week:8,completed_tasks:['rest-2|all|测试导入任务']}
   ]);
   assert.deepEqual(imported.inserted,[3]);assert.deepEqual(imported.skipped,[2]);
   assert.equal((await snapshot('ai')).camps.find(c=>c.id===ai.id).open_date,'2030-01-06');
+  const prep=vm.runInNewContext(fs.readFileSync(require.resolve('../data.js'),'utf8')+';SOP_PREP');
+  const importedCamp=(await snapshot('ai')).camps.find(c=>c.term===3);
+  assert.equal(importedCamp.exam_week,8);
+  for(const item of prep){
+   const key=`${item.idWeek || 'prep'}|${item.idDay ?? item.day}|${item.id || item.t}`;
+   const saved=await setTask('ai',importedCamp.id,key,0,true);
+   assert.equal(saved.completed,true,'preparation tasks save under the existing database constraint');
+  }
+  const closing=vm.runInNewContext(fs.readFileSync(require.resolve('../data.js'),'utf8')+';[...SOP_CLOSING,...SOP_TRACKING]');
+  for(const item of closing){
+   const key=`${item.idWeek || 'week-13'}|${item.idDay ?? item.day}|${item.id || item.t}`;
+   const saved=await setTask('ai',importedCamp.id,key,0,true);
+   assert.equal(saved.completed,true,'week thirteen saves through the deployed task-key constraint');
+  }
   await assert.rejects(importCamps('ai',[
    {term:4,open_date:'2030-02-03',skips:[],completed_tasks:[]},
    {term:5,open_date:'2030-02-03',skips:[],completed_tasks:['invalid-key']}
